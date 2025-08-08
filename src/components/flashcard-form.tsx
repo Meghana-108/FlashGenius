@@ -19,12 +19,19 @@ export function FlashcardForm({
 }: FlashcardFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!formRef.current) return;
+
+    const formData = new FormData(formRef.current);
+    onGenerate(formData);
+  };
+
   return (
     <form
       ref={formRef}
-      action={(formData) => {
-        onGenerate(formData);
-      }}
+      onSubmit={handleSubmit}
       className="flex w-full items-center space-x-2"
     >
       <Input

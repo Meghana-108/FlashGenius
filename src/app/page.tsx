@@ -8,7 +8,7 @@ import { FlashcardForm } from "@/components/flashcard-form";
 import { FlashcardGrid } from "@/components/flashcard-grid";
 import { SiteHeader } from "@/components/site-header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle, Lightbulb } from "lucide-react";
+import { AlertTriangle, Lightbulb, Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   topic: z.string().min(3, "Topic must be at least 3 characters long."),
@@ -33,7 +33,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setTopic(topicValue);
-    if(flashcards.length > 0) {
+    if (flashcards.length > 0) {
       setFlashcards([]);
     }
 
@@ -49,7 +49,14 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-background">
+    <div className="min-h-screen w-full bg-background relative">
+      {/* 🌀 Fullscreen Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+        </div>
+      )}
+
       <SiteHeader />
       <main className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
         <section className="mx-auto mb-12 max-w-2xl text-center">
@@ -78,21 +85,35 @@ export default function Home() {
         </section>
 
         <section className="mt-12">
-          <FlashcardGrid
-            flashcards={flashcards}
-            loading={loading}
-            topic={topic}
-          />
-          {!loading && flashcards.length === 0 && !error && (
-            <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
-              <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-xl font-semibold text-foreground">
-                Your flashcards will appear here
-              </h3>
-              <p className="mt-2 text-muted-foreground">
-                Enter a topic above to get started. Try &quot;The Roman Empire&quot; or &quot;Quantum Physics&quot;.
-              </p>
+          {/* 💡 Flashcard Skeleton Placeholder */}
+          {loading ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-32 animate-pulse rounded-lg bg-muted shadow"
+                ></div>
+              ))}
             </div>
+          ) : flashcards.length > 0 ? (
+            <FlashcardGrid
+              flashcards={flashcards}
+              loading={loading}
+              topic={topic}
+            />
+          ) : (
+            !error && (
+              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
+                <Lightbulb className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-xl font-semibold text-foreground">
+                  Your flashcards will appear here
+                </h3>
+                <p className="mt-2 text-muted-foreground">
+                  Enter a topic above to get started. Try &quot;The Roman Empire&quot; or
+                  &quot;Quantum Physics&quot;.
+                </p>
+              </div>
+            )
           )}
         </section>
       </main>
