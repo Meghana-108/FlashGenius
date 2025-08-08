@@ -52,7 +52,7 @@ export function FlashcardGrid({
       </h2>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {flashcards.map((card, index) => (
-          <Flashcard key={index} question={card.question} answer={card.answer} />
+ <Flashcard key={`${topic}-${index}`} question={card.question} answer={card.answer} />
         ))}
       </div>
     </>
